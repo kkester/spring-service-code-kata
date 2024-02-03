@@ -29,8 +29,5 @@ public class ProductEntity {
     private String name;
     private String price;
     private String description;
-    private String imageSrc;
-    private String imageAlt;
-
     private int quantity;
 }
