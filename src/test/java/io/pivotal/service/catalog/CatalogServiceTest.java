@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
+import static io.pivotal.service.catalog.CatalogFactory.createCatalog;
 import static io.pivotal.service.catalog.CatalogFactory.createCatalogEntity;
 import static io.pivotal.service.product.ProductFactory.createProduct;
 import static io.pivotal.service.product.ProductFactory.createProductEntity;
@@ -37,10 +38,7 @@ class CatalogServiceTest {
 
         List<Catalog> catalogs = catalogService.getAll();
 
-        Catalog expectedCatalog = Catalog.builder()
-            .code("xyz")
-            .displayName("Sports")
-            .build();
+        Catalog expectedCatalog = createCatalog();
         assertThat(catalogs).containsExactly(expectedCatalog);
     }
 
@@ -50,14 +48,16 @@ class CatalogServiceTest {
         catalogRepository.save(catalogEntity);
         Product product = createProduct();
 
-        Catalog catalog = catalogService.addProduct(product);
+        Catalog catalog = catalogService.addProduct(catalogEntity.getCode(), product);
 
-        Catalog expectedCatalog = Catalog.builder()
-            .code("xyz")
-            .displayName("Sports")
+        Catalog expectedCatalog = createCatalog().toBuilder()
             .products(List.of(product))
             .build();
         assertThat(catalog).isEqualTo(expectedCatalog);
+
+        List<ProductEntity> productEntities = productRepository.findAllByCatalogId(catalogEntity.getId());
+        assertThat(productEntities).hasSize(1);
+        assertThat(productEntities.get(0).getSku()).isEqualTo(product.getSku());
     }
 
     @Test
@@ -77,9 +77,7 @@ class CatalogServiceTest {
 
         Catalog catalog = catalogService.replaceProducts(catalogEntity.getCode(), products);
 
-        Catalog expectedCatalog = Catalog.builder()
-            .code("xyz")
-            .displayName("Sports")
+        Catalog expectedCatalog = createCatalog().toBuilder()
             .products(products)
             .build();
         assertThat(catalog).isEqualTo(expectedCatalog);

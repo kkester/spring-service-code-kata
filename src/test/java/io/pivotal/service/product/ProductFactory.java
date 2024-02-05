@@ -16,7 +16,6 @@ public class ProductFactory {
 
     public static Product createProduct() {
         return Product.builder()
-            .catalogCode("xyz")
             .sku("abc")
             .name("Ball")
             .description("Round Ball")

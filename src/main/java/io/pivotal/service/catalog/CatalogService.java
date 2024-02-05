@@ -23,7 +23,7 @@ public class CatalogService {
         return null;
     }
 
-    public Catalog addProduct(Product product) {
+    public Catalog addProduct(String catalogCode, Product product) {
         return null;
     }
 

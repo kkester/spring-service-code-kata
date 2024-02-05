@@ -4,12 +4,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ProductMapper {
-    public void updateProductEntity(ProductEntity productEntity, Product product) {
-        productEntity.setSku(product.getSku());
-        productEntity.setName(product.getName());
-        productEntity.setDescription(product.getDescription());
-        productEntity.setPrice(product.getPrice());
-        productEntity.setQuantity(product.getQuantity());
-        productEntity.setName(product.getName());
+    public Product toProduct(ProductEntity productEntity) {
+        return Product.builder()
+            .sku(productEntity.getSku())
+            .name(productEntity.getName())
+            .description(productEntity.getDescription())
+            .price(productEntity.getPrice())
+            .quantity(productEntity.getQuantity())
+            .build();
     }
 }
