@@ -1,16 +1,12 @@
 package io.pivotal.service.catalog;
 
 import io.pivotal.service.product.Product;
-import io.pivotal.service.product.ProductEntity;
-import io.pivotal.service.product.ProductMapper;
 import io.pivotal.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,15 +33,16 @@ public class CatalogService {
     public Catalog replaceProducts(String catalogCode, List<Product> products) {
         CatalogEntity catalogEntity = catalogRepository.findByCode(catalogCode)
             .orElseThrow(() -> new ResourceNotFoundException("Catalog not found"));
-        Map<String, Product> productMap = productService.getProductsForCatalog(catalogEntity.getId()).stream()
-            .collect(Collectors.toMap(Product::getSku, Function.identity()));
+
+        List<String> skus = new ArrayList<>();
         products.forEach(product -> {
-            productMap.remove(product.getSku());
+            skus.add(product.getSku());
             productService.saveProduct(catalogEntity, product);
         });
-        productService.deleteAllProductsFor(catalogEntity.getId(), productMap.keySet());
+        productService.removeAllProductsFromCatalogExcept(catalogEntity.getId(), skus);
+
         return catalogMapper.toCatalog(catalogEntity).toBuilder()
-            .products(products)
+            .products(productService.getProductsForCatalog(catalogEntity.getId()))
             .build();
     }
 }

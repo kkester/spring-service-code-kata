@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -35,7 +34,11 @@ public class ProductService {
             .toList();
     }
 
-    public void deleteAllProductsFor(UUID catalogEntityId, Set<String> productSkus) {
-        productRepository.deleteByCatalogIdAndSkuIsIn(catalogEntityId, productSkus);
+    public void removeAllProductsFromCatalogExcept(UUID catalogEntityId, List<String> productSkus) {
+        if (productSkus.isEmpty()) {
+            productRepository.deleteAllByCatalogId(catalogEntityId);
+        } else {
+            productRepository.deleteAllByCatalogIdAndSkuIsNotIn(catalogEntityId, productSkus);
+        }
     }
 }

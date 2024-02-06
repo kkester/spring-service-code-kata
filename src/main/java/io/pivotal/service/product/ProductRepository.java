@@ -5,12 +5,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {
     List<ProductEntity> findAllByCatalogId(UUID catalogId);
     Optional<ProductEntity> findByCatalogIdAndSku(UUID catalogId, String sku);
-    void deleteByCatalogIdAndSkuIsIn(UUID catalogId, Set<String> sku);
+    void deleteAllByCatalogId(UUID catalogEntityId);
+    void deleteAllByCatalogIdAndSkuIsNotIn(UUID catalogId, List<String> sku);
 }
