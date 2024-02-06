@@ -18,6 +18,7 @@ public class CatalogService {
 
     private final CatalogRepository catalogRepository;
     private final ProductService productService;
+    private final CatalogMapper catalogMapper;
 
     public List<Catalog> getAll() {
         return null;

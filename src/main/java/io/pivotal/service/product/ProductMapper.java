@@ -13,4 +13,14 @@ public class ProductMapper {
             .quantity(productEntity.getQuantity())
             .build();
     }
+
+    public ProductEntity toProductEntity(Product product) {
+        return ProductEntity.builder()
+            .sku(product.getSku())
+            .name(product.getName())
+            .description(product.getDescription())
+            .price(product.getPrice())
+            .quantity(product.getQuantity())
+            .build();
+    }
 }

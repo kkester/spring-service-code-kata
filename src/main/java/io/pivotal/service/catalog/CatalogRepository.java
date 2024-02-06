@@ -8,5 +8,4 @@ import java.util.UUID;
 
 @Repository
 public interface CatalogRepository extends JpaRepository<CatalogEntity, UUID> {
-    Optional<CatalogEntity> findByCode(String catalogCode);
 }
