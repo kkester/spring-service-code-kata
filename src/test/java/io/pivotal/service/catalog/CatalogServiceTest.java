@@ -43,6 +43,13 @@ class CatalogServiceTest {
     }
 
     @Test
+    void addProduct_failsWhenCatalogIdIsInvalid() {
+        Exception exception = assertThrows(ResourceNotFoundException.class, () ->
+            catalogService.replaceProducts("invalidCode", emptyList()));
+        assertThat(exception.getMessage()).isEqualToIgnoringCase("Catalog not found");
+    }
+
+    @Test
     void addProduct_successfullyAddsProductToCatalog() {
         CatalogEntity catalogEntity = createCatalogEntity();
         catalogRepository.save(catalogEntity);
@@ -61,14 +68,14 @@ class CatalogServiceTest {
     }
 
     @Test
-    void replaceProducts_whenCatalogIdIsInvalid() {
+    void replaceProducts_failsWhenCatalogIdIsInvalid() {
         Exception exception = assertThrows(ResourceNotFoundException.class, () ->
             catalogService.replaceProducts("invalidCode", emptyList()));
         assertThat(exception.getMessage()).isEqualToIgnoringCase("Catalog not found");
     }
 
     @Test
-    void replaceProducts_whenProductDoesNotExist() {
+    void replaceProducts_successfullyWhenProductDoesNotExist() {
         CatalogEntity catalogEntity = createCatalogEntity();
         catalogRepository.save(catalogEntity);
 
@@ -88,7 +95,7 @@ class CatalogServiceTest {
     }
 
     @Test
-    void replaceProducts_whenProductExists() {
+    void replaceProducts_successfullyWhenProductExists() {
         CatalogEntity catalogEntity = createCatalogEntity();
         catalogRepository.save(catalogEntity);
         ProductEntity productEntityToUpdate = createProductEntity();
@@ -109,7 +116,7 @@ class CatalogServiceTest {
     }
 
     @Test
-    void replaceProducts_whenProductHasBeenRemoved() {
+    void replaceProducts_successfullyWhenProductHasBeenRemoved() {
         CatalogEntity catalogEntity = createCatalogEntity();
         catalogRepository.save(catalogEntity);
         ProductEntity productEntityToDelete = createProductEntity();
