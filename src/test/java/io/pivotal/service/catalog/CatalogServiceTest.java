@@ -45,7 +45,7 @@ class CatalogServiceTest {
     @Test
     void addProduct_failsWhenCatalogIdIsInvalid() {
         Exception exception = assertThrows(ResourceNotFoundException.class, () ->
-            catalogService.replaceProducts("invalidCode", emptyList()));
+            catalogService.addProduct("invalidCode", null));
         assertThat(exception.getMessage()).isEqualToIgnoringCase("Catalog not found");
     }
 
