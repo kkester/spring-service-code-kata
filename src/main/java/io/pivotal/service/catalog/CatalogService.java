@@ -23,7 +23,8 @@ public class CatalogService {
     }
 
     public Catalog addProduct(String catalogCode, Product product) {
-        CatalogEntity catalogEntity = catalogRepository.findByCode(catalogCode).orElseThrow(ResourceNotFoundException::new);
+        CatalogEntity catalogEntity = catalogRepository.findByCode(catalogCode)
+            .orElseThrow(() -> new ResourceNotFoundException("Catalog not found"));
         productService.saveProduct(catalogEntity, product);
         Catalog catalog = catalogMapper.toCatalog(catalogEntity);
         catalog.setProducts(productService.getProductsForCatalog(catalogEntity.getId()));
