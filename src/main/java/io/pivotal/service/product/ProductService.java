@@ -8,7 +8,5 @@ import org.springframework.stereotype.Service;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final ProductUpdater productUpdater;
-    private final ProductMapper productMapper;
 
 }
