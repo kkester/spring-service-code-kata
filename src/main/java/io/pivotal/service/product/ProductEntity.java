@@ -2,15 +2,13 @@ package io.pivotal.service.product;
 
 import io.pivotal.service.catalog.CatalogEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Builder
 @NoArgsConstructor
@@ -22,7 +20,7 @@ public class ProductEntity {
     @GenericGenerator(name = "uuid-hibernate-generator", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
-    @OneToOne
+    @ManyToOne
     private CatalogEntity catalog;
 
     private String sku;
