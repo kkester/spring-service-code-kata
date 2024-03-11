@@ -119,6 +119,23 @@ class CatalogServiceTest {
     void replaceProducts_successfullyWhenProductHasBeenRemoved() {
         CatalogEntity catalogEntity = createCatalogEntity();
         catalogRepository.save(catalogEntity);
+        Product product = createProduct();
+        ProductEntity productEntityToDelete = createProductEntity();
+        productEntityToDelete.setSku("123");
+        productEntityToDelete.setCatalog(catalogEntity);
+        productRepository.save(productEntityToDelete);
+
+        catalogService.replaceProducts(catalogEntity.getCode(), List.of(product));
+
+        List<ProductEntity> productEntities = productRepository.findAllByCatalogId(catalogEntity.getId());
+        assertThat(productEntities).hasSize(1);
+        assertThat(productEntities.get(0).getSku()).isEqualTo(product.getSku());
+    }
+
+    @Test
+    void replaceProducts_successfullyWhenAllProductsHaveBeenRemoved() {
+        CatalogEntity catalogEntity = createCatalogEntity();
+        catalogRepository.save(catalogEntity);
         ProductEntity productEntityToDelete = createProductEntity();
         productEntityToDelete.setSku("123");
         productEntityToDelete.setCatalog(catalogEntity);

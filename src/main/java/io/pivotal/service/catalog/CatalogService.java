@@ -5,7 +5,6 @@ import io.pivotal.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,24 +25,19 @@ public class CatalogService {
         CatalogEntity catalogEntity = catalogRepository.findByCode(catalogCode)
             .orElseThrow(() -> new ResourceNotFoundException("Catalog not found"));
         productService.saveProduct(catalogEntity, product);
-        Catalog catalog = catalogMapper.toCatalog(catalogEntity);
-        catalog.setProducts(productService.getProductsForCatalog(catalogEntity.getId()));
-        return catalog;
+        return getCatalog(catalogEntity);
     }
 
     public Catalog replaceProducts(String catalogCode, List<Product> products) {
         CatalogEntity catalogEntity = catalogRepository.findByCode(catalogCode)
             .orElseThrow(() -> new ResourceNotFoundException("Catalog not found"));
+        productService.replaceProducts(catalogEntity, products);
+        return getCatalog(catalogEntity);
+    }
 
-        List<String> skus = new ArrayList<>();
-        products.forEach(product -> {
-            skus.add(product.getSku());
-            productService.saveProduct(catalogEntity, product);
-        });
-        productService.removeAllProductsFromCatalogExcept(catalogEntity.getId(), skus);
-
-        return catalogMapper.toCatalog(catalogEntity).toBuilder()
-            .products(productService.getProductsForCatalog(catalogEntity.getId()))
-            .build();
+    private Catalog getCatalog(CatalogEntity catalogEntity) {
+        Catalog catalog = catalogMapper.toCatalog(catalogEntity);
+        catalog.setProducts(productService.getProductsForCatalog(catalogEntity.getId()));
+        return catalog;
     }
 }
