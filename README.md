@@ -2,8 +2,10 @@
 
 This project contains a coding exercise focusing on implementing logic in the service layer of a backend micro-service.
 The test resources contains a `CatalogServiceTest` with pre-defined tests to verify the behavior of the corresponding service `CatalogService`.
-The `CatalogService` only contains method stubs which will result in the tests to fail.  The goal of the exercise is to implement login the service so that all the tests pass.
-The models have been defined which includes a `CatalogEntity` which has a one-to-many relationship with `ProductEntity`. The service exposes the model data using the `Catalog` and `Product` DTOs.
+The `CatalogService` only contains method stubs which will result in the tests to fail.  The goal of the exercise is to implement the service logic so that all the tests pass.
+
+The models have been defined which includes a `CatalogEntity` which has a one-to-many relationship with `ProductEntity`. The service exposes the model data using the `Catalog` and `Product` DTOs.  Details about the data model can be found in the [V1__schema.sql](src/main/resources/db/migration/V1__schema.sql).
+
 The predefined tests and models should not be modified.  The exercise should be completed by implementing the minimal amount of needed to get the test to pass starting with the first test defined in the `CatalogServiceTest` followed by each subsequent test working down the list.
 
 ### Reference Documentation
