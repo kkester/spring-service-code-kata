@@ -1,4 +1,4 @@
-package io.pivotal.service.catalog;
+package io.pivotal.service.errors;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException() {

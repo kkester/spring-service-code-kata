@@ -1,5 +1,7 @@
 package io.pivotal.service.catalog;
 
+import io.pivotal.service.errors.ResourceConflictException;
+import io.pivotal.service.errors.ResourceNotFoundException;
 import io.pivotal.service.product.Product;
 import io.pivotal.service.product.ProductEntity;
 import io.pivotal.service.product.ProductRepository;
@@ -76,6 +78,21 @@ class CatalogServiceTest {
         assertThat(actualProductEntity.getDescription()).isEqualTo(product.getDescription());
         assertThat(actualProductEntity.getPrice()).isEqualTo(product.getPrice());
         assertThat(actualProductEntity.getQuantity()).isEqualTo(product.getQuantity());
+    }
+
+    @Test
+    void addProduct_failsWhenCatalogAlreadyContainsProduct() {
+        CatalogEntity catalogEntity = createCatalogEntity();
+        catalogRepository.save(catalogEntity);
+        ProductEntity productEntityToUpdate = createProductEntity();
+        productEntityToUpdate.setCatalog(catalogEntity);
+        productRepository.save(productEntityToUpdate);
+        Product product = createProduct();
+
+        Exception exception = assertThrows(ResourceConflictException.class, () ->
+            catalogService.addProduct(catalogEntity.getCode(), product));
+
+        assertThat(exception.getMessage()).isEqualToIgnoringCase("Product already exists");
     }
 
     @Test
