@@ -1,5 +1,6 @@
 package io.pivotal.service.product;
 
+import io.pivotal.service.catalog.CatalogEntity;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,8 +15,9 @@ public class ProductMapper {
             .build();
     }
 
-    public ProductEntity toProductEntity(Product product) {
+    public ProductEntity toProductEntity(Product product, CatalogEntity catalogEntity) {
         return ProductEntity.builder()
+            .catalog(catalogEntity)
             .sku(product.getSku())
             .name(product.getName())
             .description(product.getDescription())
