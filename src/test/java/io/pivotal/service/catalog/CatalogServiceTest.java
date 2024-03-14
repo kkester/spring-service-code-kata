@@ -33,11 +33,14 @@ class CatalogServiceTest {
 
     @Test
     void getAll_successfullyReturnsAllCatalogs() {
+        // arrange
         CatalogEntity catalogEntity = createCatalogEntity();
         catalogRepository.save(catalogEntity);
 
+        // act
         List<Catalog> catalogs = catalogService.getAll();
 
+        // assert
         Catalog expectedCatalog = createCatalog();
         assertThat(catalogs).containsExactly(expectedCatalog);
     }
@@ -51,12 +54,15 @@ class CatalogServiceTest {
 
     @Test
     void addProduct_successfullyAddsProductToCatalog() {
+        // arrange
         CatalogEntity catalogEntity = createCatalogEntity();
         catalogRepository.save(catalogEntity);
         Product product = createProduct();
 
+        // act
         Catalog catalog = catalogService.addProduct(catalogEntity.getCode(), product);
 
+        // assert
         Catalog expectedCatalog = createCatalog().toBuilder()
             .products(List.of(product))
             .build();
@@ -75,20 +81,23 @@ class CatalogServiceTest {
     @Test
     void replaceProducts_failsWhenCatalogIdIsInvalid() {
         Exception exception = assertThrows(ResourceNotFoundException.class, () ->
-            catalogService.replaceProducts("invalidCode", emptyList()));
+            catalogService.replaceProducts("invalidCode", null));
         assertThat(exception.getMessage()).isEqualToIgnoringCase("Catalog not found");
     }
 
     @Test
     void replaceProducts_successfullyWhenProductDoesNotExist() {
+        // arrange
         CatalogEntity catalogEntity = createCatalogEntity();
         catalogRepository.save(catalogEntity);
 
         Product newProduct = createProduct();
         List<Product> products = List.of(newProduct);
 
+        // act
         Catalog catalog = catalogService.replaceProducts(catalogEntity.getCode(), products);
 
+        // assert
         Catalog expectedCatalog = createCatalog().toBuilder()
             .products(products)
             .build();
@@ -106,6 +115,7 @@ class CatalogServiceTest {
 
     @Test
     void replaceProducts_successfullyWhenProductExists() {
+        // arrange
         CatalogEntity catalogEntity = createCatalogEntity();
         catalogRepository.save(catalogEntity);
         ProductEntity productEntityToUpdate = createProductEntity();
@@ -113,7 +123,7 @@ class CatalogServiceTest {
         productRepository.save(productEntityToUpdate);
 
         Product existingProduct = Product.builder()
-            .sku("def")
+            .sku(productEntityToUpdate.getSku())
             .name("Deformed Ball")
             .description("Roundish Ball")
             .price("$1.99")
@@ -121,8 +131,10 @@ class CatalogServiceTest {
             .build();
         List<Product> products = List.of(existingProduct);
 
+        // act
         catalogService.replaceProducts(catalogEntity.getCode(), products);
 
+        // assert
         List<ProductEntity> productEntities = productRepository.findAllByCatalogId(catalogEntity.getId());
         assertThat(productEntities).hasSize(1);
         ProductEntity actualProductEntity = productEntities.get(0);
@@ -136,6 +148,7 @@ class CatalogServiceTest {
 
     @Test
     void replaceProducts_successfullyWhenProductHasBeenRemoved() {
+        // arrange
         CatalogEntity catalogEntity = createCatalogEntity();
         catalogRepository.save(catalogEntity);
         Product product = createProduct();
@@ -144,8 +157,10 @@ class CatalogServiceTest {
         productEntityToDelete.setCatalog(catalogEntity);
         productRepository.save(productEntityToDelete);
 
+        // act
         catalogService.replaceProducts(catalogEntity.getCode(), List.of(product));
 
+        // assert
         List<ProductEntity> productEntities = productRepository.findAllByCatalogId(catalogEntity.getId());
         assertThat(productEntities).hasSize(1);
         assertThat(productEntities.get(0).getSku()).isEqualTo(product.getSku());
@@ -153,6 +168,7 @@ class CatalogServiceTest {
 
     @Test
     void replaceProducts_successfullyWhenAllProductsHaveBeenRemoved() {
+        // arrange
         CatalogEntity catalogEntity = createCatalogEntity();
         catalogRepository.save(catalogEntity);
         ProductEntity productEntityToDelete = createProductEntity();
@@ -160,13 +176,16 @@ class CatalogServiceTest {
         productRepository.save(productEntityToDelete);
 
         CatalogEntity anotherCatalogEntity = createCatalogEntity();
+        anotherCatalogEntity.setCode("x1z");
         catalogRepository.save(anotherCatalogEntity);
         ProductEntity productEntity = createProductEntity();
         productEntity.setCatalog(anotherCatalogEntity);
         productRepository.save(productEntity);
 
+        // act
         catalogService.replaceProducts(catalogEntity.getCode(), emptyList());
 
+        // assert
         List<ProductEntity> productEntities = productRepository.findAllByCatalogId(catalogEntity.getId());
         assertThat(productEntities).isEmpty();
         List<ProductEntity> otherProductEntities = productRepository.findAllByCatalogId(anotherCatalogEntity.getId());
