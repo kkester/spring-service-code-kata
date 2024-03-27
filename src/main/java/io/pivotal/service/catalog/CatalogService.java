@@ -1,5 +1,6 @@
 package io.pivotal.service.catalog;
 
+import io.pivotal.service.errors.ResourceNotFoundException;
 import io.pivotal.service.product.Product;
 import io.pivotal.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class CatalogService {
     public Catalog addProduct(String catalogCode, Product product) {
         CatalogEntity catalogEntity = catalogRepository.findByCode(catalogCode)
             .orElseThrow(() -> new ResourceNotFoundException("Catalog not found"));
-        productService.saveProduct(catalogEntity, product);
+        productService.addProduct(catalogEntity, product);
         return getCatalog(catalogEntity);
     }
 
